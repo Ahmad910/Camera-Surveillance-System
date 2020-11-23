@@ -1,0 +1,195 @@
+<div id="title-page">
+  <div id="title-page-wrapper">
+    <div id="title-page-title">
+      <center><h1><div id="title-page-title-text">Evli Surveillance Corp.</div></h1></center>
+    </div>
+    <div id="title-page-logo">
+      <center><img id="title-page-logo-image" src="./images/camicon.png" alt="logo" /></center>
+    </div>
+  </div>
+  <div id="title-page-title">
+    <center><h1><div id="title-page-title-text">CCTV1984 SS</div></h1></center>
+  </div>
+  <div class="title-page-footer">
+    <span id="title-page-footer-text">Congratulations on your purchase of the CCTV1984 Surveillance System!
+      We are sure it will serve whatever challenges you might throw at it as it was handcrafted by highly
+      motivated and proficient engineering students in Lund. If you are having issues or business inquiries,
+      do not refrain to send an email to any of the developers' email adresses below.</span>
+      <h5><br>Johan Ahlqvist: dat15jah@student.lu.se
+        <br>André Skoog: nyg15ask@student.lu.se
+        <br>Adnan Pasovic: dat15apa@student.lu.se
+        <br>Ahmad Ibrahim: dat15aib@student.lu.se
+        <br>
+        <center><h1>User Manual</h1></center><br>
+        <p><h2>Contents</h2>
+          <h3><a href="#introduction" id="ref3">1. Introduction</a><br>
+            <a href="#system" id="ref4">2. System overview<br>
+            <a href="#server" id="ref5">3. Server<br>
+            <a href="#client" id="ref6">4. Client<br>
+            <a href="#specifications" id="ref7">5. Technical specifications<br>
+            <a href="#support" id="ref8">6. Support<br>
+            <a href="#legal" id="ref9">7. Legal statement<br>
+          </p></h3><br>
+
+
+        </div>
+        <div>
+          <h2><a id="introduction">1. Introduction</a></h2>
+          <p>
+            The CCTV1984 Surveillance System is an globally relevant product which enables governments and corporations
+            to monitor suspicious and non-suspicious individuals in a constantly changing world with new threats emerging. The system's standard
+            outfit of abilities is very broad and should cover most user's needs. However, if you find yourself
+            needing even more features, there are modules available such as the STASI© (STop And Scan Images) module which features facial and emotion recognition in
+            concert with a mass surveillance ability. In this case, do consider sending the developers an email and they will get back to you with
+            a price tag.
+          </p>
+          <p>
+          The system is easy to set up and get running. It consists of a server and a client. The server is a specialized piece of software
+          that is uploaded to a compatible <sup><a href="#fn1" id="ref1">1</a></sup> network connected camera running Linux. It features modern technology
+          that allows it to send images in the compressed JPEG format that reduces your bandwidth by up to 90% <sup><a href="#fn3" id="ref10">2</a></sup>, thus reducing cost. The client is an application capable of running
+          on most modern OS <sup><a href="#fn2" id="ref2">3</a></sup>. It connects to the server and gives the user practically infinite options <sup><a href="#fn4" id="ref11">4</a></sup>
+          to decide how the camera should operate. No one passing a camera connected to the CCTV1984 client will go unnoticed <sup><a href="#fn5" id="ref12">5</a></sup>.</p>
+          <hr></hr>
+
+          <sup id="fn1">1. For a complete list of compatible models, refer to the technical specifications.<a href="#ref1" title="Jump back to footnote 1 in the text.">↩</a></sup><br>
+          <sup id="fn3">2. In comparison to sending raw images. <a href="#ref10" title="Jump back to footnote 2 in the text.">↩</a></sup><br>
+
+          <sup id="fn2">3. For a complete list of compatible OS, refer to the technical specifications.<a href="#ref2" title="Jump back to footnote 3 in the text.">↩</a></sup><br>
+          <sup id="fn4">4. "Practically infinite options" is rounded up from the two options, FPS and synchronization, available.<a href="#ref11" title="Jump back to footnote 4 in the text.">↩</a></sup><br>
+          <sup id="fn5">5. Unless they are moving fast enough.<a href="#ref12" title="Jump back to footnote 4 in the text.">↩</a></sup>
+
+          <hr></hr>
+
+          </div>
+
+        <div>
+          <h2><a id="system">2. System overview</a></h2>
+          <p>
+          The following image summarizes the system layout. The server side is separated from the client side by being on the right side of the dotted line.
+          The lines crossing the dotted line represent internet connections that connect the server and client. The rectangles with arrows pointing in circles
+          symbolize threads. The rectangles with flags symbolize monitors, they are used to store data that needs to be accessed in a structured way to avoid concurrency issues.
+          The text that is adjacent to arrows show what kind of data is being sent on the link.
+        </p>
+          <center><img id="title-page-logo-image" src="./images/structure.png" alt="logo" /></center>
+          <p>
+          Now that you know how the basics of how the system works, let's get this software running!
+          </p>
+          <p>
+            To start the system, first run "make frame_server motion_server" in the /server/ directory of the application. This will produce two binary files that
+            are needed to run the software on the camera. After the compilation, the binaries need to be uploaded to the camera. This can be done
+            by using the scp command.
+          </p>
+          <p>
+            Upload both of the binaries by using the following command: "scp motion_server frame_server USERNAME@YOUR_CAMERA_IP:~/".
+            Once that is completed, the binaries are in the camera. Now you need to start the frame_server binary which is the main entrypoint for the server.
+          </p> Proceed by logging in to your camera with the following command: "ssh USERNAME@YOUR_CAMERA_IP". Execute the frame_server binary with the command "./frame_server PORT".
+          Replace PORT with the port you desire the server to run on.
+        </p>
+        <p>
+          Congratulations, the server is now running on the camera! To receive images from the camera, start the client on your computer. In the adress field, type in the IP and port of your camera
+          separated by a colon mark. It should look like this but with different digits: "111.111.111.111:2222". Press the Connect button adjacent to the IP field to connect to the server. You are now viewing the camera in real time!
+          Please consult the Client section for further information on the client.
+        </p>
+        </div>
+
+        <div>
+          <h2><a id="server">3. Server</a></h2>
+          <p> The server is a lightweight application written entirely in C.
+            It consists of three main parts: the frame thread, the mode thread and the motion server thread.
+          </p><p>
+            The frame thread is the thread responsible for accepting connections from client as well as sending images contained in frames. The frames the server sends
+            contain several fields which enables the client to decipher more information about the camera. First of all, a frame holds a timestamp of when it was sent.
+            This allows the camera to account for network delay. Secondly, it contains an integer representing the current camera mode. The mode may either be
+            1 (== idle) or 2 (== movie), and it helps the client making sure that its commanded modes have been acknowledged. After the mode comes another integer
+            which tells the client how big the image being sent is, which helps the client decode the image bytes. After that size variable, the actual image bytes are sent.
+          </p>
+          <p>
+            When the frame thread operates in idle mode, the thread is capped to send an image every five seconds, resulting in an FPS of 0.2.
+            The frame thread does not sleep, but rather waits for a signal to be sent for a certain amount of time before proceeding. This enables the client
+            to change the mode to 'movie' while in 'idle' and instantly getting more FPS, not having to wait for the frame thread to exit from a sleep.
+          </p>
+          <p>
+            The mode thread is reponsible for receiving the commanded mode from the client. The message containing the mode is decoded and interpreted
+            and set in the server monitor called global_state. global_state has an attribute proposed_mode that the mode thread sets to whatever the client
+            demands. This attribute is then read by the frame thread which updates its internal mode.
+          </p>
+          <p>
+            While no connection is available, the mode thread waits. Once a connection has been received by the frame thread, the frame thread sets a file descriptor
+            in the monitor to the current connection, thus allowing the mode thread to read from the same socket. Once the file descriptor is set, the frame thread
+            signals the mode thread by using the global_cond. This awakes the mode thread, which then tries to receive data on the socket if everything is in order.
+          </p>
+          <p>
+            The motion server is quite separated from the frame server. It is started as a child process to the frame_server's main method on the port of the frame_server plus one.
+            For example, if the frame server is initated to run at argus-3:5000, the motion server will be available at argus-3:5001. The motion server enables the client
+            to receieve information on when the last motion was taken. This allows automatic setting of FPS modes. If motion is detected in automatic mode and the server is in idle mode,
+            the client will automatically order all connected cameras to movie mode, after consulting the motion server.
+          </p>
+        </div>
+
+        <div>
+          <h2><a id="client">4. Client</a></h2>
+          <p>1, Typ in the ipv4 address and port in the textfield in the following format (ip:port) Example 127.0.0.1:5000 see Picture for reference
+          </p>
+          <p>
+          2, Press the button on the left of the textfield to connect to the given ip adress.
+        </p>
+          <center><img id="title-page-logo-image" src="./images/client1.png" alt="logo" /></center>
+        <p>
+          3, In the bottom right two sets of radiobuttons allow the user to force picture taking modes and synchronization modes.
+        </p>
+        <p>
+          Once cameras have been conected to the system the system requires a few seconds to calibrate, when that has been completed information about the state of
+          the system can be seen above the Camera screens. Also related to the different camera screens there are a few labels which display information about the images that camera is sending to the system.
+        </p>
+          <center><img id="title-page-logo-image" src="./images/client2.png" alt="logo" /></center>
+        <p>
+        The types of information which they display are:<br>
+
+          A: the mode in which the current image was taken<br>
+          B: the delay that the system has experienced<br>
+          C: the current fps.<br>
+        </p>
+        </div>
+
+        <div>
+          <h2><a id="specifications">5. Technical specifications</a></h2>
+          Supported cameras: Axis M3006V<br>
+          Supported client OS: Linux<br>
+          Maximum frame rate: 25 FPS<br>
+          Maximum resolution: 640x480<br>
+          Image format: JPEG<br>
+          Maximum simultaneous camera streams: 2<br>
+        </div>
+
+        <div>
+          <h2><a id="support">6. Support</a></h2>
+          For any support related inquiries, please send an email to dat15jah@student.lu.se and we will make sure that you
+          receieve the attention that you need.
+        </div>
+
+        <div>
+          <h2><a id="legal">7. Legal statement</a></h2>
+          <p>
+          Disclaimer for Evli Surveillance Corp.<br>
+
+          If you require any more information or have any questions about our disclaimer,
+          please feel free to contact us by email at dat15jah@student.lu.se.
+        </p>
+        <p>
+          Disclaimers for the CCTV1984 Surveillance System<br>
+
+          All the information in this User Manual is published in good faith and for general
+          information purpose only. Evli Surveillance Corp does not make any warranties about
+          the completeness, reliability, accuracy or veracity of this information. Any action you take upon
+          the information you find on this document, is strictly at your
+          own risk. Evli Surveillance Corp. will not be liable for any losses and/or damages in connection
+          with the use of our software.
+          </p>
+        <p>
+          Consent<br>
+          By reading this document and/or using the CCTV1984 SS software, you hereby consent to our disclaimer and agree to its terms.
+        </p>
+        </div>
+
+
+      </div>

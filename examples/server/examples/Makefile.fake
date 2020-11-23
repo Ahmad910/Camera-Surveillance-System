@@ -1,0 +1,29 @@
+# To run: make -f Makefile.fake 
+#
+# For compiling on PC
+CC=gcc
+
+.PHONY: all clean distclean
+all: fake_server motion_server_host motion_client
+
+CPPFLAGS+=-DFAKE -DDISABLE_SANITY_CHECKS
+CPPFLAGS+=-DUSE_POSIX_FUNCTION
+CPPFLAGS+=-DINFO
+# CPPFLAGS+=-DDEBUG
+# CPPFLAGS+=-DSHORT_NUMBER_FRAME_SEQUENCE
+CFLAGS+=-g -Wall
+LDLIBS=-lpthread
+
+fake_server: http_server.c fakecapture.h fakecapture.c camera.h camera.c server_common.c
+	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) http_server.c fakecapture.c camera.c server_common.c $(LDLIBS)
+
+motion_server_host: motion_server.c server_common.c
+	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) motion_server.c  server_common.c $(LDLIBS)
+
+motion_client: motion_client.c server_common.c
+	$(CC) -o $@ $(CPPFLAGS) $(CFLAGS) $(LDFLAGS) motion_client.c  server_common.c $(LDLIBS)
+
+clean:
+
+distclean: clean
+	-rm fake_server motion_server_host motion_client

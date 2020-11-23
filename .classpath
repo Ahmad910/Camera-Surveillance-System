@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry excluding="examples/client/Network example four threads/src/|examples/client/Swing example/src/|client/" kind="src" path=""/>
+	<classpathentry kind="src" path="client"/>
+	<classpathentry kind="src" path="examples/client/Network example four threads/src"/>
+	<classpathentry kind="src" path="examples/client/Swing example/src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/h/d6/i/dat15aib/ljrt.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
